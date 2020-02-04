@@ -28,8 +28,6 @@ class ViewController: UIViewController {
     
     // MARK: - Properties
     
-    let colorValueMin: Float = 0.0
-    let colorValueMax: Float = 1.0
     
     // MARK: - Life Cycles Methods
     
@@ -44,6 +42,7 @@ class ViewController: UIViewController {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
         view.endEditing(true)
     }
     
@@ -56,19 +55,25 @@ class ViewController: UIViewController {
     // MARK: - Private Methods
     
     private func updateUI() {
+        updateLabels()
+        updateTextFields()
+        
+        colorView.backgroundColor = UIColor(red: CGFloat(redSlider.value),
+                                            green: CGFloat(greenSlider.value),
+                                            blue: CGFloat(blueSlider.value),
+                                            alpha: 1)
+    }
+    
+    private func updateLabels() {
         redLabel.text = String(format: "%.2f", redSlider.value)
-        redTextField.text = String(format: "%.2f", redSlider.value)
-        
         greenLabel.text = String(format: "%.2f", greenSlider.value)
-        greenTextField.text = String(format: "%.2f", greenSlider.value)
-        
         blueLabel.text = String(format: "%.2f", blueSlider.value)
+    }
+    
+    private func updateTextFields() {
+        redTextField.text = String(format: "%.2f", redSlider.value)
+        greenTextField.text = String(format: "%.2f", greenSlider.value)
         blueTextField.text = String(format: "%.2f", blueSlider.value)
-        
-        colorView.backgroundColor = UIColor.init(red: CGFloat(redSlider?.value ?? colorValueMin),
-                                                 green: CGFloat(greenSlider?.value ?? colorValueMin),
-                                                 blue: CGFloat(blueSlider?.value ?? colorValueMin),
-                                                 alpha: CGFloat(colorValueMax))
     }
     
     private func addDoneButton(to textField: UITextField) {
@@ -95,15 +100,15 @@ extension ViewController: UITextFieldDelegate {
             return
         }
         
-        var colorValue = colorValueMin
+        var colorValue = redSlider.minimumValue
         
         if let floatValue = Float(inputText) {
-            if colorValueMin...colorValueMax ~= floatValue {
+            if redSlider.minimumValue...redSlider.maximumValue ~= floatValue {
                 colorValue = floatValue
                 textField.text = String(format: "%.2f", colorValue)
             }
             else {
-                showAlert(with: "Wrong range", message: String(format: "Range should be from %.2f to %.2f", colorValueMin, colorValueMax))
+                showAlert(with: "Wrong range", message: String(format: "Range should be from %.2f to %.2f", redSlider.minimumValue, redSlider.maximumValue))
                 return
             }
         } else {
